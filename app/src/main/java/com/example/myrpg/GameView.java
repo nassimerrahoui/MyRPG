@@ -108,6 +108,23 @@ public class GameView extends SurfaceView {
 
         float x = event.getX();
         float y = event.getY();
+
+        // indices de la cell touchee
+        int cellX = (int) x / cell_width;
+        int cellY = (int) y / cell_height;
+
+        // eviter debordement
+        if(cellX > NB_CASE_LARGEUR)
+            cellX = NB_CASE_LARGEUR;
+        // eviter debordement
+        if(cellY > NB_CASE_HAUTEUR)
+            cellY = NB_CASE_HAUTEUR;
+
+        Cell c = cells.get(cellX).get(cellY);
+
+        if(c.getPersonnage() != null) {
+
+        }
         return super.onTouchEvent(event);
 
     }
