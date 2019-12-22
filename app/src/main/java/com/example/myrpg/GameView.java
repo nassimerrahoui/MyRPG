@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
@@ -21,6 +22,8 @@ public class GameView extends SurfaceView {
     protected final static int NB_CASE_HAUTEUR = 6;
     protected int width;
     protected int height;
+    protected int cell_width;
+    protected int cell_height;
     protected final Vector<Vector<Cell>> cells;
     private SurfaceHolder holder;
     private GameEngine gameEngine;
@@ -36,16 +39,17 @@ public class GameView extends SurfaceView {
         display.getSize(size);
         width = size.x;
         height = size.y;
+        cell_width = width / NB_CASE_LARGEUR;
+        cell_height = height / NB_CASE_HAUTEUR;
 
         cells = new Vector<>();
         for (int i = 0; i < NB_CASE_LARGEUR; i++) {
             cells.add(new Vector<Cell>(height));
-            int x = 0;
+            int x = i * cell_width;
             int y = 0;
             for (int j = 0; j < NB_CASE_HAUTEUR; j++) {
                 cells.get(i).add(new Cell(context,this, x, y));
-                x = x + (width / NB_CASE_LARGEUR);
-                y = y + (height / NB_CASE_HAUTEUR);
+                y = y + cell_height;
             }
         }
         createsPersonnages();
@@ -97,5 +101,14 @@ public class GameView extends SurfaceView {
         Rect dest = new Rect(0,0,width, height);
         canvas.drawBitmap(bg, src, dest,null);
         cells.get(4).get(4).onDraw(canvas);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        float x = event.getX();
+        float y = event.getY();
+        return super.onTouchEvent(event);
+
     }
 }
