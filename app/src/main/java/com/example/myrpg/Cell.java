@@ -2,6 +2,7 @@ package com.example.myrpg;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
 
@@ -42,11 +43,15 @@ public class Cell extends View {
         }
     }
 
-    public void onDraw(Canvas canvas) {
+    public void onDraw(Canvas canvas, int cell_width, int cell_height) {
         if(personnage != null) {
             Rect src = new Rect (0, 0, personnage.getBmp().getWidth(), personnage.getBmp().getHeight());
-            Rect dst = new Rect ( x, y, x+personnage.getBmp().getWidth()*3, y+personnage.getBmp().getHeight()*3);
+            Rect dst = new Rect ( x, y, x+personnage.getBmp().getWidth(), y+personnage.getBmp().getHeight());
             canvas.drawBitmap(personnage.getBmp(), src, dst, null);
+        } else {
+            Paint myPaint = new Paint();
+            myPaint.setStyle(Paint.Style.STROKE);
+            canvas.drawRect(x,y,x+cell_width,y+cell_height, myPaint);
         }
     }
 }

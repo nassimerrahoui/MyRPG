@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -96,11 +97,16 @@ public class GameView extends SurfaceView {
     @Override
     protected void onDraw(Canvas canvas) {
         // set background
-        Bitmap bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.map_test_2);
+        /*Bitmap bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.map_test_2);
         Rect src = new Rect(0,0,bg.getWidth(), bg.getHeight());
         Rect dest = new Rect(0,0,width, height);
-        canvas.drawBitmap(bg, src, dest,null);
-        cells.get(4).get(4).onDraw(canvas);
+        canvas.drawBitmap(bg, src, dest,null);*/
+       // cells.get(4).get(4).onDraw(canvas, cell_width, cell_height);
+        for(int i = 0; i < NB_CASE_LARGEUR; i++) {
+            for(int j = 0; j < NB_CASE_HAUTEUR; j++) {
+                cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
+            }
+        }
     }
 
     @Override
@@ -114,17 +120,17 @@ public class GameView extends SurfaceView {
         int cellY = (int) y / cell_height;
 
         // eviter debordement
-        if(cellX > NB_CASE_LARGEUR)
+        if(cellX >= NB_CASE_LARGEUR)
             cellX = NB_CASE_LARGEUR;
         // eviter debordement
-        if(cellY > NB_CASE_HAUTEUR)
+        if(cellY >= NB_CASE_HAUTEUR)
             cellY = NB_CASE_HAUTEUR;
 
         Cell c = cells.get(cellX).get(cellY);
 
-        if(c.getPersonnage() != null) {
-
-        }
+        /*if(c.getPersonnage() != null) {
+            Toast.makeText(getContext(), "X:" + x + " Y:" + y, Toast.LENGTH_LONG).show();
+        }*/
         return super.onTouchEvent(event);
 
     }
