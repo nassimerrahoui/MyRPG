@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MyRPG</string>
+    <string name="start">MyRPG \n Touch to start</string>
+    <string name="story_mode">Story Mode</string>
+    <string name="options">Options</string>
+    <string name="quit">Quit</string>
+</resources>
