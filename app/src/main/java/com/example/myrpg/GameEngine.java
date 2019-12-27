@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 
 public class GameEngine extends Thread {
 
-    GameView gameView;
     private GameView view;
     private boolean running = false;
 
@@ -21,16 +20,12 @@ public class GameEngine extends Thread {
     @Override
     public void run() {
         while (running) {
-            Canvas c = null;
-            try {
-                c = view.getHolder().lockCanvas();
+                Canvas c = view.getHolder().lockCanvas();
                 synchronized (view.getHolder()) {
                     view.onDraw(c);
                 }
-            } finally {
                 if (c != null) {
                     view.getHolder().unlockCanvasAndPost(c);
-                }
             }
         }
     }
