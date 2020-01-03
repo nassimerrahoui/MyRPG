@@ -1,58 +1,41 @@
 package com.example.myrpg;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+public class Level0Activity extends AppCompatActivity implements LevelFragment.OnFragmentInteractionListener {
 
-public class Level0Activity extends AppCompatActivity {
-
-    GameView gameView;
-    FrameLayout frameLayout;
-    ConstraintLayout gameButtons;
-    FloatingActionButton menu;
+    LevelFragment level;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        gameView = new GameView(this);
-        frameLayout = new FrameLayout(this);
-        gameButtons = new ConstraintLayout(this);
-        menu = new FloatingActionButton(this);
-        menu.setId(R.id.menu);
 
-        ConstraintLayout.LayoutParams menuParams = new ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT
-        );
+        FrameLayout frame = new FrameLayout(this);
+        frame.setId(R.id.level0activity);
+        setContentView(frame);
 
-        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                ConstraintLayout.LayoutParams.MATCH_PARENT
-        );
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        LevelFragment level = new LevelFragment();
 
-        ConstraintLayout.LayoutParams frameLayoutParams = new ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                ConstraintLayout.LayoutParams.MATCH_PARENT
-        );
+        // Begin the transaction
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.add(R.id.level0activity,level);
+        ft.commit();
 
-        menuParams.rightToRight = frameLayout.getRight();
-        menuParams.bottomToBottom = frameLayout.getBottom();
-        menuParams.topToTop = frameLayout.getTop();
-        menuParams.leftToLeft = frameLayout.getLeft();
+        ft.show(level);
 
-        menu.setLayoutParams(menuParams);
-        gameButtons.setLayoutParams(params);
-        frameLayout.setLayoutParams(frameLayoutParams);
+    }
 
-        gameButtons.addView(menu);
-        frameLayout.addView(gameView);
-        frameLayout.addView(gameButtons);
-        setContentView(frameLayout);
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     @Override
