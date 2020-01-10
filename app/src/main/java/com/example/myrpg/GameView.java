@@ -1,10 +1,12 @@
 package com.example.myrpg;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -27,16 +29,51 @@ public class GameView extends SurfaceView {
     protected int height;
     protected int cell_width;
     protected int cell_height;
-    protected final Vector<Vector<Cell>> cells;
+    protected Vector<Vector<Cell>> cells;
     private SurfaceHolder holder;
     private GameEngine gameEngine;
     private long lastClick;
     private ArrayList<Personnage> personnages = new ArrayList<Personnage>();
     private boolean personnageSelected;
+    private ConstraintLayout screen;
+    private FloatingActionButton menu;
+    private FloatingActionButton action;
+    private FrameLayout parent;
 
+    public GameView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    public GameView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context);
+    }
 
     public GameView(Context context) {
         super(context);
+        init(context);
+    }
+
+    private void init(Context context) {
+        // instanciation des attributs
+        personnageSelected = false;
+
+        screen = ((Activity)context).findViewById(R.id.game_screen);
+
+        parent = (FrameLayout)getParent();
+
+
+
+        if(screen == null) {
+            System.out.println("LLLLLLLLLLLLLLLLLLLLLLLL");
+        }
+        menu = screen.findViewById(R.id.menu_button);
+        action = screen.findViewById(R.id.action_button);
+
+        if(menu == null) {
+            System.out.println("MERDEEEEEEEEEEEEEEEEEEEEEEEE");
+        }
 
         // recuperation de la taille de l'ecran
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -47,7 +84,6 @@ public class GameView extends SurfaceView {
         height = size.y;
         cell_width = width / NB_CASE_LARGEUR;
         cell_height = height / NB_CASE_HAUTEUR;
-        personnageSelected = false;
 
         // remplissage des cellules
         cells = new Vector<>();
@@ -62,6 +98,7 @@ public class GameView extends SurfaceView {
         }
         createsPersonnages();
 
+        // Thread du jeu
         gameEngine = new GameEngine(this);
         holder = getHolder();
         holder.addCallback(new SurfaceHolder.Callback() {
@@ -117,30 +154,16 @@ public class GameView extends SurfaceView {
     }
 
     protected void getPersonnageMenu(float x, float y) {
-
-        FrameLayout parent = (FrameLayout) getParent();
-        ConstraintLayout gameButtons = (ConstraintLayout) parent.getChildAt(1);
-        FloatingActionButton menu = (FloatingActionButton) gameButtons.getChildAt(0);
         menu.show();
+        action.show();
         personnageSelected = false;
-
-//        FloatingActionButton menu = findViewById(R.id.menu);
-//        menu.show();
-//        personnageSelected = false;
     }
 
     protected void getCellSelected(Cell c) {
         if(c.getPersonnage() == null){
-
-            FrameLayout parent = (FrameLayout) getParent();
-            ConstraintLayout gameButtons = (ConstraintLayout) parent.getChildAt(1);
-            FloatingActionButton menu = (FloatingActionButton) gameButtons.getChildAt(0);
             menu.hide();
+            action.hide();
             personnageSelected = true;
-
-//            FloatingActionButton menu = findViewById(R.id.menu);
-//            menu.hide();
-//            personnageSelected = true;
         }
     }
 
