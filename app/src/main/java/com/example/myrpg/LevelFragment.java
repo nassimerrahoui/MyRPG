@@ -7,7 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 
 /**
@@ -65,10 +70,19 @@ public class LevelFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.game_screen, container, false);
-        
+        ConstraintLayout c = (ConstraintLayout) inflater.inflate(R.layout.game_screen, container, false);
+        FloatingActionButton menu = c.findViewById(R.id.menu_button);
+        FloatingActionButton action = c.findViewById(R.id.action_button);
 
-        return v;
+        ArrayList<View> buttons = new ArrayList<>();
+        buttons.add(menu);
+        buttons.add(action);
+
+        GameView gameView = new GameView(getContext(), buttons);
+
+        c.addView(gameView);
+
+        return c;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

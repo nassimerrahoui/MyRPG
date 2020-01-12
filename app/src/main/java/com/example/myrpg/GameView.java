@@ -1,20 +1,17 @@
 package com.example.myrpg;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.util.AttributeSet;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -35,45 +32,23 @@ public class GameView extends SurfaceView {
     private long lastClick;
     private ArrayList<Personnage> personnages = new ArrayList<Personnage>();
     private boolean personnageSelected;
-    private ConstraintLayout screen;
     private FloatingActionButton menu;
     private FloatingActionButton action;
-    private FrameLayout parent;
 
-    public GameView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
-
-    public GameView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context);
-    }
-
-    public GameView(Context context) {
+    public GameView(Context context, ArrayList<View> buttons) {
         super(context);
-        init(context);
+        init(context, buttons);
     }
 
-    private void init(Context context) {
+    private void init(Context context, ArrayList<View> buttons) {
+        // construction des views
+
+        menu = (FloatingActionButton) buttons.get(0);
+        action = (FloatingActionButton) buttons.get(1);
+        setBackgroundColor(Color.GRAY);
+
         // instanciation des attributs
         personnageSelected = false;
-
-        screen = ((Activity)context).findViewById(R.id.game_screen);
-
-        parent = (FrameLayout)getParent();
-
-
-
-        if(screen == null) {
-            System.out.println("LLLLLLLLLLLLLLLLLLLLLLLL");
-        }
-        menu = screen.findViewById(R.id.menu_button);
-        action = screen.findViewById(R.id.action_button);
-
-        if(menu == null) {
-            System.out.println("MERDEEEEEEEEEEEEEEEEEEEEEEEE");
-        }
 
         // recuperation de la taille de l'ecran
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
