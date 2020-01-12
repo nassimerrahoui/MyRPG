@@ -6,12 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 
 /**
@@ -33,12 +34,6 @@ public class LevelFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
-    // Ajout
-    GameView gameView;
-    FrameLayout frameLayout;
-    ConstraintLayout gameButtons;
-    FloatingActionButton menu;
 
     public LevelFragment() {
         // Required empty public constructor
@@ -74,41 +69,20 @@ public class LevelFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        gameView = new GameView(this.getContext());
-        frameLayout = new FrameLayout(this.getContext());
-        gameButtons = new ConstraintLayout(this.getContext());
-        menu = new FloatingActionButton(this.getContext());
-        menu.setId(R.id.menu);
 
-        ConstraintLayout.LayoutParams menuParams = new ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT
-        );
+        ConstraintLayout c = (ConstraintLayout) inflater.inflate(R.layout.game_screen, container, false);
+        FloatingActionButton menu = c.findViewById(R.id.menu_button);
+        FloatingActionButton action = c.findViewById(R.id.action_button);
 
-        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                ConstraintLayout.LayoutParams.MATCH_PARENT
-        );
+        ArrayList<View> buttons = new ArrayList<>();
+        buttons.add(menu);
+        buttons.add(action);
 
-        ConstraintLayout.LayoutParams frameLayoutParams = new ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                ConstraintLayout.LayoutParams.MATCH_PARENT
-        );
+        GameView gameView = new GameView(getContext(), buttons);
 
-        menuParams.rightToRight = frameLayout.getRight();
-        menuParams.bottomToBottom = frameLayout.getBottom();
-        menuParams.topToTop = frameLayout.getTop();
-        menuParams.leftToLeft = frameLayout.getLeft();
+        c.addView(gameView);
 
-        menu.setLayoutParams(menuParams);
-        gameButtons.setLayoutParams(params);
-        frameLayout.setLayoutParams(frameLayoutParams);
-
-        gameButtons.addView(menu);
-        frameLayout.addView(gameView);
-        frameLayout.addView(gameButtons);
-
-        return frameLayout;
+        return c;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
