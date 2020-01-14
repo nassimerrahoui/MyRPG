@@ -2,10 +2,13 @@ package com.example.myrpg;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -24,8 +27,8 @@ public class GameView extends SurfaceView {
     protected final static int NB_CASE_HAUTEUR = 6;
     protected int width;
     protected int height;
-    protected int cell_width;
-    protected int cell_height;
+    protected final int cell_width;
+    protected final int cell_height;
     protected Vector<Vector<Cell>> cells;
     private SurfaceHolder holder;
     private GameEngine gameEngine;
@@ -37,19 +40,6 @@ public class GameView extends SurfaceView {
 
     public GameView(Context context, ArrayList<View> buttons) {
         super(context);
-        init(context, buttons);
-    }
-
-    private void init(Context context, ArrayList<View> buttons) {
-        // construction des views
-
-        menu = (FloatingActionButton) buttons.get(0);
-        action = (FloatingActionButton) buttons.get(1);
-        setBackgroundColor(Color.GRAY);
-
-        // instanciation des attributs
-        personnageSelected = false;
-
         // recuperation de la taille de l'ecran
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -59,6 +49,21 @@ public class GameView extends SurfaceView {
         height = size.y;
         cell_width = width / NB_CASE_LARGEUR;
         cell_height = height / NB_CASE_HAUTEUR;
+        init(context, buttons);
+    }
+
+    private void init(Context context, ArrayList<View> buttons) {
+        // construction des views
+
+        menu = (FloatingActionButton) buttons.get(0);
+        action = (FloatingActionButton) buttons.get(1);
+
+        createListener();
+
+        setBackgroundColor(Color.GRAY);
+
+        // instanciation des attributs
+        personnageSelected = false;
 
         // remplissage des cellules
         cells = new Vector<>();
@@ -107,20 +112,41 @@ public class GameView extends SurfaceView {
 
 
     public void createsPersonnages() {
-       // Bitmap p_bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.char1_right);
-      //Personnage p = new Personnage(p_bmp);
-        // cells.get(4).get(4).setPersonnage(p);
+        Bitmap p1_bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.char1_right);
+        Personnage p1 = new Personnage(p1_bmp, true);
+        cells.get(4).get(4).setPersonnage(p1);
+
+        Bitmap p2_bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.char1_right);
+        Personnage p2 = new Personnage(p2_bmp, false);
+        cells.get(2).get(2).setPersonnage(p2);
+    }
+
+    public void createListener() {
+        action.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menu.hide();
+                action.hide();
+                drawSelectableCells();
+            }
+        });
+
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelPersonnageMenu();
+            }
+        });
     }
 
     @SuppressLint("WrongCall")
     @Override
     protected void onDraw(Canvas canvas) {
         // set background
-        //Bitmap bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.map1);
-        //Rect src = new Rect(0,0,bg.getWidth(), bg.getHeight());
+        Bitmap bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.map1);
+        Rect src = new Rect(0,0,bg.getWidth(), bg.getHeight());
         Rect dest = new Rect(0,0,width, height);
-        //canvas.drawBitmap(bg, src, dest,null);
-       // cells.get(4).get(4).onDraw(canvas, cell_width, cell_height);
+        canvas.drawBitmap(bg, src, dest,null);
         for(int i = 0; i < NB_CASE_LARGEUR; i++) {
             for(int j = 0; j < NB_CASE_HAUTEUR; j++) {
                 cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
@@ -128,17 +154,56 @@ public class GameView extends SurfaceView {
         }
     }
 
-    protected void getPersonnageMenu(float x, float y) {
-        menu.show();
-        action.show();
+    protected void cancelPersonnageMenu() {
+        menu.hide();
+        action.hide();
         personnageSelected = false;
+        resetSelectableCells();
     }
 
-    protected void getCellSelected(Cell c) {
-        if(c.getPersonnage() == null){
-            menu.hide();
-            action.hide();
-            personnageSelected = true;
+    protected void getPersonnageControlableMenu() {
+        menu.show();
+        action.show();
+        personnageSelected = true;
+    }
+
+    protected void getPersonnageMenu() {
+        menu.show();
+        // Afficher stats ou quelque chose comme ça
+    }
+
+    protected void onCellTouchEvent(Cell c) {
+       boolean hasPerso = c.getPersonnage() != null;
+        if(hasPerso) {
+           if(c.getPersonnage().getId() > 0) {
+               getPersonnageControlableMenu();
+           } else {
+               getPersonnageMenu();
+           }
+       }
+    }
+
+    protected void drawSelectableCells() {
+        for (Vector<Cell> v : cells) {
+            for (Cell c : v) {
+                if(c.getPersonnage() != null && c.getPersonnage().getId() < 0) {
+                    c.setFlagSelectable(true);
+                    Log.i("CELL", "REF " + c.toString());
+                    Log.i("CELL", "Set flag to true " + c.getPosX() + ", " + c.getPosY());
+                }
+            }
+        }
+
+        System.out.println("drawSelectable");
+    }
+
+    protected void resetSelectableCells() {
+
+        Log.i("RESET CELLS", "reset cells");
+        for (Vector<Cell> v : cells) {
+            for (Cell c : v) {
+                c.setFlagSelectable(false);
+            }
         }
     }
 
@@ -159,10 +224,12 @@ public class GameView extends SurfaceView {
             cellY = NB_CASE_HAUTEUR;
 
         Cell c = cells.get(cellX).get(cellY);
-        if(personnageSelected) {
-            getPersonnageMenu(x,y);
-        } else {
-            getCellSelected(c);
+
+        if(!personnageSelected) { onCellTouchEvent(c); }
+        else {
+            if(c.flagSelectable) {
+                c.setPersonnage(null);
+            }
         }
         return super.onTouchEvent(event);
     }
