@@ -15,6 +15,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -37,9 +38,13 @@ public class GameView extends SurfaceView {
     private boolean personnageSelected;
     private FloatingActionButton menu;
     private FloatingActionButton action;
+    private boolean isInitBackground;
 
     public GameView(Context context, ArrayList<View> buttons) {
         super(context);
+        //set bg
+        setBackgroundColor(Color.TRANSPARENT);
+
         // recuperation de la taille de l'ecran
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -53,17 +58,14 @@ public class GameView extends SurfaceView {
     }
 
     private void init(Context context, ArrayList<View> buttons) {
-        // construction des views
-
+        // construction des boutons
         menu = (FloatingActionButton) buttons.get(0);
         action = (FloatingActionButton) buttons.get(1);
-
         createListener();
-
-        setBackgroundColor(Color.GRAY);
 
         // instanciation des attributs
         personnageSelected = false;
+        isInitBackground = false;
 
         // remplissage des cellules
         cells = new Vector<>();
@@ -72,7 +74,7 @@ public class GameView extends SurfaceView {
             int x = i * cell_width;
             int y = 0;
             for (int j = 0; j < NB_CASE_HAUTEUR; j++) {
-                cells.get(i).add(new Cell(context,this, x, y));
+                cells.get(i).add(new Cell(context,this, x, y, i, j));
                 y = y + cell_height;
             }
         }
@@ -106,11 +108,6 @@ public class GameView extends SurfaceView {
         });
     }
 
-    public Vector<Vector<Cell>> getCells() {
-        return cells;
-    }
-
-
     public void createsPersonnages() {
         Bitmap p1_bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.char1_right);
         Personnage p1 = new Personnage(p1_bmp, true);
@@ -142,11 +139,20 @@ public class GameView extends SurfaceView {
     @SuppressLint("WrongCall")
     @Override
     protected void onDraw(Canvas canvas) {
-        // set background
-        Bitmap bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.map1);
-        Rect src = new Rect(0,0,bg.getWidth(), bg.getHeight());
-        Rect dest = new Rect(0,0,width, height);
-        canvas.drawBitmap(bg, src, dest,null);
+
+        /** PROBLEM ECRASEMENT BACKGROUND */
+        if(!isInitBackground) {
+            // set background
+            Bitmap bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.map1);
+            Rect src = new Rect(0, 0, bg.getWidth(), bg.getHeight());
+            Rect dest = new Rect(0, 0, width, height);
+            canvas.drawBitmap(bg, src, dest, null);
+            isInitBackground = true;
+            Log.i("BACKGROUND", "SETTER");
+        }
+        canvas.drawColor(Color.TRANSPARENT);
+        /** PROBLEM ECRASEMENT BACKGROUND */
+
         for(int i = 0; i < NB_CASE_LARGEUR; i++) {
             for(int j = 0; j < NB_CASE_HAUTEUR; j++) {
                 cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
@@ -184,22 +190,19 @@ public class GameView extends SurfaceView {
     }
 
     protected void drawSelectableCells() {
-        for (Vector<Cell> v : cells) {
-            for (Cell c : v) {
-                if(c.getPersonnage() != null && c.getPersonnage().getId() < 0) {
-                    c.setFlagSelectable(true);
-                    Log.i("CELL", "REF " + c.toString());
-                    Log.i("CELL", "Set flag to true " + c.getPosX() + ", " + c.getPosY());
+        for(int i = 0; i < NB_CASE_LARGEUR; i++) {
+            for(int j = 0; j < NB_CASE_HAUTEUR; j++) {
+                if(cells.get(i).get(j).getPersonnage() != null && cells.get(i).get(j).getPersonnage().getId() < 0) {
+                    cells.get(i).get(j).setFlagSelectable(true);
+                    //Log.i("CELL", "REF " + cells.get(i).get(j).toString());
+                    //Log.i("CELL", "Set flag to true " + i + ", " + j);
                 }
             }
         }
-
-        System.out.println("drawSelectable");
     }
 
     protected void resetSelectableCells() {
-
-        Log.i("RESET CELLS", "reset cells");
+        //Log.i("RESET CELLS", "reset cells");
         for (Vector<Cell> v : cells) {
             for (Cell c : v) {
                 c.setFlagSelectable(false);
@@ -229,6 +232,8 @@ public class GameView extends SurfaceView {
         else {
             if(c.flagSelectable) {
                 c.setPersonnage(null);
+                c.setFlagSelectable(false);
+                Toast.makeText(getContext(),"Ennemi a ete tue", Toast.LENGTH_LONG).show();
             }
         }
         return super.onTouchEvent(event);
