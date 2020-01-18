@@ -1,5 +1,4 @@
 package com.example.myrpg;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -42,7 +41,7 @@ public class GameView extends SurfaceView {
 
     public GameView(Context context, ArrayList<View> buttons) {
         super(context);
-        //set bg
+        //set background
         setBackgroundColor(Color.TRANSPARENT);
 
         // recuperation de la taille de l'ecran
@@ -54,20 +53,14 @@ public class GameView extends SurfaceView {
         height = size.y;
         cell_width = width / NB_CASE_LARGEUR;
         cell_height = height / NB_CASE_HAUTEUR;
+
+        // initialisation
         init(context, buttons);
     }
 
     private void init(Context context, ArrayList<View> buttons) {
-        // construction des boutons
-        menu = (FloatingActionButton) buttons.get(0);
-        action = (FloatingActionButton) buttons.get(1);
-        createListener();
 
-        // instanciation des attributs
-        personnageSelected = false;
-        isInitBackground = false;
-
-        // remplissage des cellules
+        // creations des cellules du jeu
         cells = new Vector<>();
         for (int i = 0; i < NB_CASE_LARGEUR; i++) {
             cells.add(new Vector<Cell>(height));
@@ -78,9 +71,24 @@ public class GameView extends SurfaceView {
                 y = y + cell_height;
             }
         }
+
+        // ajout des personnages aux cellules
         createsPersonnages();
 
-        // Thread du jeu
+        // construction des boutons
+        menu = (FloatingActionButton) buttons.get(0);
+        action = (FloatingActionButton) buttons.get(1);
+        createListener();
+
+        // initialisations des attributs
+        personnageSelected = false;
+        isInitBackground = false;
+
+        gameLoop();
+    }
+
+    /** Thread de la partie */
+    private void gameLoop() {
         gameEngine = new GameEngine(this);
         holder = getHolder();
         holder.addCallback(new SurfaceHolder.Callback() {
@@ -108,13 +116,38 @@ public class GameView extends SurfaceView {
         });
     }
 
+    /** Met a jour l'affichage de l'ecran */
+    @SuppressLint("WrongCall")
+    @Override
+    protected void onDraw(Canvas canvas) {
+
+        /** PROBLEM ECRASEMENT BACKGROUND */
+        if(!isInitBackground) {
+            // set background
+            Bitmap bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.map1);
+            Rect src = new Rect(0, 0, bg.getWidth(), bg.getHeight());
+            Rect dest = new Rect(0, 0, width, height);
+            canvas.drawBitmap(bg, src, dest, null);
+            isInitBackground = true;
+            Log.i("BACKGROUND", "SETTER");
+        }
+        /** PROBLEM ECRASEMENT BACKGROUND */
+
+        for(int i = 0; i < NB_CASE_LARGEUR; i++) {
+            for(int j = 0; j < NB_CASE_HAUTEUR; j++) {
+                cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
+            }
+        }
+    }
+
     public void createsPersonnages() {
         Bitmap p1_bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.char1_right);
         Personnage p1 = new Personnage(p1_bmp, true);
         cells.get(4).get(4).setPersonnage(p1);
 
         Bitmap p2_bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.char1_right);
-        Personnage p2 = new Personnage(p2_bmp, false);
+        Bitmap mutable_p2_bmp = p2_bmp.copy(Bitmap.Config.ARGB_8888, true);
+        Personnage p2 = new Personnage(mutable_p2_bmp, false);
         cells.get(2).get(2).setPersonnage(p2);
     }
 
@@ -136,28 +169,15 @@ public class GameView extends SurfaceView {
         });
     }
 
-    @SuppressLint("WrongCall")
-    @Override
-    protected void onDraw(Canvas canvas) {
+    protected void getPersonnageControlableMenu() {
+        menu.show();
+        action.show();
+        personnageSelected = true;
+    }
 
-        /** PROBLEM ECRASEMENT BACKGROUND */
-        if(!isInitBackground) {
-            // set background
-            Bitmap bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.map1);
-            Rect src = new Rect(0, 0, bg.getWidth(), bg.getHeight());
-            Rect dest = new Rect(0, 0, width, height);
-            canvas.drawBitmap(bg, src, dest, null);
-            isInitBackground = true;
-            Log.i("BACKGROUND", "SETTER");
-        }
-        canvas.drawColor(Color.TRANSPARENT);
-        /** PROBLEM ECRASEMENT BACKGROUND */
-
-        for(int i = 0; i < NB_CASE_LARGEUR; i++) {
-            for(int j = 0; j < NB_CASE_HAUTEUR; j++) {
-                cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
-            }
-        }
+    protected void getPersonnageIncontrolableMenu() {
+        menu.show();
+        // Afficher stats ou quelque chose comme ça
     }
 
     protected void cancelPersonnageMenu() {
@@ -167,26 +187,21 @@ public class GameView extends SurfaceView {
         resetSelectableCells();
     }
 
-    protected void getPersonnageControlableMenu() {
-        menu.show();
-        action.show();
-        personnageSelected = true;
-    }
-
-    protected void getPersonnageMenu() {
-        menu.show();
-        // Afficher stats ou quelque chose comme ça
-    }
-
     protected void onCellTouchEvent(Cell c) {
        boolean hasPerso = c.getPersonnage() != null;
         if(hasPerso) {
            if(c.getPersonnage().getId() > 0) {
                getPersonnageControlableMenu();
            } else {
-               getPersonnageMenu();
+               getPersonnageIncontrolableMenu();
            }
        }
+    }
+
+    protected void onSelectableCellTouchEvent(Cell c) {
+        c.getPersonnage().hp = 0;
+        c.setFlagSelectable(false);
+        Toast.makeText(getContext(),"Ennemi a ete tue", Toast.LENGTH_LONG).show();
     }
 
     protected void drawSelectableCells() {
@@ -230,11 +245,7 @@ public class GameView extends SurfaceView {
 
         if(!personnageSelected) { onCellTouchEvent(c); }
         else {
-            if(c.flagSelectable) {
-                c.setPersonnage(null);
-                c.setFlagSelectable(false);
-                Toast.makeText(getContext(),"Ennemi a ete tue", Toast.LENGTH_LONG).show();
-            }
+            if(c.flagSelectable) { onSelectableCellTouchEvent(c);}
         }
         return super.onTouchEvent(event);
     }

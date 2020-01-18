@@ -32,6 +32,10 @@ public class Personnage extends GameObject {
         return bmp;
     }
 
+    public void setBmp(Bitmap bmp) {
+        this.bmp = bmp;
+    }
+
     public int getId() {
         return id;
     }

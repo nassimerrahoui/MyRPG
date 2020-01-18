@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.view.View;
 
 public class Cell extends View {
@@ -56,36 +55,28 @@ public class Cell extends View {
         Paint myPaint = new Paint();
 
         if(personnage != null) {
-            Rect src = new Rect (0, 0, personnage.getBmp().getWidth(), personnage.getBmp().getHeight());
-            Rect dst = new Rect ( x, y, x+personnage.getBmp().getWidth(), y+personnage.getBmp().getHeight());
-            canvas.drawBitmap(personnage.getBmp(), src, dst, null);
+            canvas.drawBitmap(personnage.getBmp(), x + cell_width/4, y + cell_height/4, null);
+            if(this.flagSelectable) {
+                //Log.i("DRAW", "SELECTABLE ");
+                //Log.i("CELL DRAW", "colonne " + colonne + " : ligne " + ligne);
+                myPaint.setStyle(Paint.Style.STROKE);
+                myPaint.setStrokeWidth(10);
+                myPaint.setColor(Color.RED);
+                canvas.drawRect(x+10,y+10,x+cell_width-10,y+cell_height-10, myPaint);
+            } else if(personnage.hp == 0){
+                personnage = null;
+                Bitmap bitmap = Bitmap.createBitmap(cell_width-2, cell_height-2, Bitmap.Config.ARGB_8888);
+                bitmap.eraseColor(Color.WHITE);
+                canvas.drawBitmap(bitmap, x, y, myPaint);
+            }
         } else {
-            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-            Bitmap bmp = Bitmap.createBitmap(cell_width, cell_height, conf);
-            bmp.eraseColor(Color.BLACK);
-            Rect src = new Rect (0, 0, x, y);
-            Rect dst = new Rect ( x, y, x+cell_width, y+cell_height);
-            canvas.drawBitmap(bmp, src, dst, null);
-
+            myPaint.setStyle(Paint.Style.STROKE);
+            myPaint.setColor(Color.BLACK);
+            canvas.drawRect(x,y,x+cell_width,y+cell_height, myPaint);
             myPaint.setStyle(Paint.Style.FILL);
-            myPaint.setColor(Color.BLACK);
-            canvas.drawRect(x,y,x+cell_width+10,y+cell_height+10, myPaint);
+            myPaint.setColor(Color.WHITE);
+            canvas.drawRect(x+2,y+2,x+cell_width-2,y+cell_height-2, myPaint);
         }
-
-        if(this.flagSelectable) {
-            //Log.i("DRAW", "SELECTABLE ");
-            //Log.i("CELL DRAW", "colonne " + colonne + " : ligne " + ligne);
-            myPaint.setStyle(Paint.Style.STROKE);
-            myPaint.setStrokeWidth(10);
-            myPaint.setColor(Color.RED);
-            canvas.drawRect(x,y,x+cell_width,y+cell_height, myPaint);
-            //Log.i("AFTER DRAW", "SELECTABLE ");
-        } else {
-            myPaint.setStyle(Paint.Style.STROKE);
-            myPaint.setColor(Color.BLACK);
-            canvas.drawRect(x,y,x+cell_width,y+cell_height, myPaint);
-        }
-        //canvas.drawRect(x,y,x+cell_width,y+cell_height, myPaint);
     }
 
     public void setFlagSelectable(boolean b) {
