@@ -9,12 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class Level0Activity extends AppCompatActivity
-        implements LevelFragment.OnFragmentInteractionListener,
-                    StatFragment.OnFragmentInteractionListener{
+public class Level0Activity extends AppCompatActivity implements LevelFragment.OnFragmentInteractionListener {
 
     LevelFragment level;
-    StatFragment stat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,17 +23,12 @@ public class Level0Activity extends AppCompatActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         level = new LevelFragment();
-        stat = new StatFragment();
 
-        // Begin the transaction
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.add(R.id.level0activity,level);
-        ft.add(R.id.level0activity,stat);
         ft.commit();
 
         ft.show(level);
-        ft.show(stat);
-
     }
 
     @Override

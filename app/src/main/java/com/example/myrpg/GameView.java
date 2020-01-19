@@ -14,6 +14,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -23,23 +26,37 @@ import java.util.Vector;
 
 public class GameView extends SurfaceView {
 
-    protected final static int NB_CASE_LARGEUR = 10;
-    protected final static int NB_CASE_HAUTEUR = 6;
+    /** attributs de l'ecran*/
     protected int width;
     protected int height;
+    private SurfaceHolder holder;
+    private boolean isInitBackground;
+
+    /** attributs des cellules du jeu */
+    protected final static int NB_CASE_LARGEUR = 10;
+    protected final static int NB_CASE_HAUTEUR = 6;
     protected final int cell_width;
     protected final int cell_height;
     protected Vector<Vector<Cell>> cells;
-    private SurfaceHolder holder;
+
+    /** Thread du jeu */
     private GameEngine gameEngine;
-    private long lastClick;
+
+    /** attributs concernant les personnages */
     private ArrayList<Personnage> personnages = new ArrayList<Personnage>();
-    private boolean personnageSelected;
     private FloatingActionButton menu;
     private FloatingActionButton action;
-    private boolean isInitBackground;
 
-    public GameView(Context context, ArrayList<View> buttons) {
+    /** attributs de personnage selectionne lorsque qu'on touche l'ecran */
+    private LinearLayout selectedPersonnageStats;
+    private ImageView selectedPersonnageImage;
+    private TextView selectedPersonnageName;
+    private TextView selectedPersonnageHp;
+    private TextView selectedPersonnageMp;
+    private boolean selectedPersonnage;
+
+
+    public GameView(Context context, ArrayList<View> buttons, ArrayList<View> stats) {
         super(context);
         //set background
         setBackgroundColor(Color.TRANSPARENT);
@@ -55,10 +72,10 @@ public class GameView extends SurfaceView {
         cell_height = height / NB_CASE_HAUTEUR;
 
         // initialisation
-        init(context, buttons);
+        init(context, buttons, stats);
     }
 
-    private void init(Context context, ArrayList<View> buttons) {
+    private void init(Context context, ArrayList<View> buttons, ArrayList<View> stats) {
 
         // creations des cellules du jeu
         cells = new Vector<>();
@@ -80,8 +97,15 @@ public class GameView extends SurfaceView {
         action = (FloatingActionButton) buttons.get(1);
         createListener();
 
+        // affichage des stats
+        selectedPersonnageStats = (LinearLayout) stats.get(0);
+        selectedPersonnageImage = (ImageView) stats.get(1);
+        selectedPersonnageName = (TextView) stats.get(2);
+        selectedPersonnageHp = (TextView) stats.get(3);
+        selectedPersonnageMp = (TextView) stats.get(4);
+
         // initialisations des attributs
-        personnageSelected = false;
+        selectedPersonnage = false;
         isInitBackground = false;
 
         gameLoop();
@@ -172,18 +196,22 @@ public class GameView extends SurfaceView {
     protected void getPersonnageControlableMenu() {
         menu.show();
         action.show();
-        personnageSelected = true;
+        selectedPersonnage = true;
     }
 
     protected void getPersonnageIncontrolableMenu() {
         menu.show();
+
         // Afficher stats ou quelque chose comme ça
+        selectedPersonnageStats.setVisibility(View.VISIBLE);
+        selectedPersonnageStats.bringToFront();
     }
 
     protected void cancelPersonnageMenu() {
         menu.hide();
         action.hide();
-        personnageSelected = false;
+        selectedPersonnageStats.setVisibility(View.GONE);
+        selectedPersonnage = false;
         resetSelectableCells();
     }
 
@@ -243,7 +271,7 @@ public class GameView extends SurfaceView {
 
         Cell c = cells.get(cellX).get(cellY);
 
-        if(!personnageSelected) { onCellTouchEvent(c); }
+        if(!selectedPersonnage) { onCellTouchEvent(c); }
         else {
             if(c.flagSelectable) { onSelectableCellTouchEvent(c);}
         }

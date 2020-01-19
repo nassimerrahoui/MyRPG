@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -74,11 +77,24 @@ public class LevelFragment extends Fragment {
         FloatingActionButton menu = c.findViewById(R.id.menu_button);
         FloatingActionButton action = c.findViewById(R.id.action_button);
 
+        LinearLayout selectedPersonnageStats = c.findViewById(R.id.selectedPersonnageStats);
+        ImageView selectedPersonnageImage = c.findViewById(R.id.img_stat_personnage);
+        TextView selectedPersonnageName = c.findViewById(R.id.name);
+        TextView selectedPersonnageHp = c.findViewById(R.id.hp);
+        TextView selectedPersonnageMp = c.findViewById(R.id.mp);
+
         ArrayList<View> buttons = new ArrayList<>();
         buttons.add(menu);
         buttons.add(action);
 
-        GameView gameView = new GameView(getContext(), buttons);
+        ArrayList<View> stats = new ArrayList<>();
+        stats.add(selectedPersonnageStats);
+        stats.add(selectedPersonnageImage);
+        stats.add(selectedPersonnageName);
+        stats.add(selectedPersonnageHp);
+        stats.add(selectedPersonnageMp);
+
+        GameView gameView = new GameView(getContext(), buttons, stats);
 
         c.addView(gameView);
 

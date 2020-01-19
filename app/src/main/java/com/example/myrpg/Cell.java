@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.View;
 
 public class Cell extends View {
@@ -55,7 +56,6 @@ public class Cell extends View {
         Paint myPaint = new Paint();
 
         if(personnage != null) {
-            canvas.drawBitmap(personnage.getBmp(), x + cell_width/4, y + cell_height/4, null);
             if(this.flagSelectable) {
                 //Log.i("DRAW", "SELECTABLE ");
                 //Log.i("CELL DRAW", "colonne " + colonne + " : ligne " + ligne);
@@ -63,11 +63,15 @@ public class Cell extends View {
                 myPaint.setStrokeWidth(10);
                 myPaint.setColor(Color.RED);
                 canvas.drawRect(x+10,y+10,x+cell_width-10,y+cell_height-10, myPaint);
+                canvas.drawBitmap(personnage.getBmp(), x + cell_width/4, y + cell_height/4, null);
             } else if(personnage.hp == 0){
+                Log.i("PERSO NULL", "OK");
+                Bitmap bmp = Bitmap.createBitmap(personnage.getBmp().getWidth(), personnage.getBmp().getHeight(), Bitmap.Config.ARGB_8888);
+                bmp.eraseColor(Color.WHITE);
+                canvas.drawBitmap(bmp, x + cell_width/4, y + cell_height/4, null);
                 personnage = null;
-                Bitmap bitmap = Bitmap.createBitmap(cell_width-2, cell_height-2, Bitmap.Config.ARGB_8888);
-                bitmap.eraseColor(Color.WHITE);
-                canvas.drawBitmap(bitmap, x, y, myPaint);
+            } else {
+                canvas.drawBitmap(personnage.getBmp(), x + cell_width/4, y + cell_height/4, null);
             }
         } else {
             myPaint.setStyle(Paint.Style.STROKE);
