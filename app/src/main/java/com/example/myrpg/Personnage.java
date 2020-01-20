@@ -9,6 +9,7 @@ public class Personnage extends GameObject {
     protected final int id;
     protected String name;
     protected int hp;
+    protected int previousHp;
     protected int mp;
     protected int atk;
     protected int def;
@@ -18,6 +19,7 @@ public class Personnage extends GameObject {
     public Personnage(Bitmap bmp, boolean controlable) {
         this.bmp = bmp;
         this.hp = 100;
+        this.previousHp = hp;
         this.mp = 100;
         this.atk = 10;
         this.def = 10;

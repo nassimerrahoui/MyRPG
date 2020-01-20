@@ -1,11 +1,9 @@
 package com.example.myrpg;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.View;
 
 public class Cell extends View {
@@ -64,16 +62,19 @@ public class Cell extends View {
                 myPaint.setColor(Color.RED);
                 canvas.drawRect(x+10,y+10,x+cell_width-10,y+cell_height-10, myPaint);
                 canvas.drawBitmap(personnage.getBmp(), x + cell_width/4, y + cell_height/4, null);
-            } else if(personnage.hp == 0){
-                Log.i("PERSO NULL", "OK");
-                Bitmap bmp = Bitmap.createBitmap(personnage.getBmp().getWidth(), personnage.getBmp().getHeight(), Bitmap.Config.ARGB_8888);
-                bmp.eraseColor(Color.WHITE);
-                canvas.drawBitmap(bmp, x + cell_width/4, y + cell_height/4, null);
-                personnage = null;
+            } else if(personnage.hp < personnage.previousHp){
+                personnage.previousHp = personnage.hp;
+                if(personnage.hp == 0) {
+                    //Log.i("PERSO NULL", "OK");
+                    personnage.getBmp().eraseColor(Color.TRANSPARENT);
+                    personnage = null;
+                }
             } else {
+                //Log.i("PERSO HERE", "OK");
                 canvas.drawBitmap(personnage.getBmp(), x + cell_width/4, y + cell_height/4, null);
             }
         } else {
+            //Log.i("EMPTY CELL", "OK");
             myPaint.setStyle(Paint.Style.STROKE);
             myPaint.setColor(Color.BLACK);
             canvas.drawRect(x,y,x+cell_width,y+cell_height, myPaint);

@@ -1,4 +1,5 @@
 package com.example.myrpg;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,8 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.Log;
+import android.graphics.drawable.Drawable;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -30,7 +30,7 @@ public class GameView extends SurfaceView {
     protected int width;
     protected int height;
     private SurfaceHolder holder;
-    private boolean isInitBackground;
+    private Drawable bg;
 
     /** attributs des cellules du jeu */
     protected final static int NB_CASE_LARGEUR = 10;
@@ -58,7 +58,10 @@ public class GameView extends SurfaceView {
 
     public GameView(Context context, ArrayList<View> buttons, ArrayList<View> stats) {
         super(context);
+
         //set background
+        //bg = ContextCompat.getDrawable(context, R.drawable.map1);
+        //setBackground(bg);
         setBackgroundColor(Color.TRANSPARENT);
 
         // recuperation de la taille de l'ecran
@@ -103,10 +106,7 @@ public class GameView extends SurfaceView {
         selectedPersonnageName = (TextView) stats.get(2);
         selectedPersonnageHp = (TextView) stats.get(3);
         selectedPersonnageMp = (TextView) stats.get(4);
-
-        // initialisations des attributs
         selectedPersonnage = false;
-        isInitBackground = false;
 
         gameLoop();
     }
@@ -145,18 +145,6 @@ public class GameView extends SurfaceView {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        /** PROBLEM ECRASEMENT BACKGROUND */
-        if(!isInitBackground) {
-            // set background
-            Bitmap bg = BitmapFactory.decodeResource(this.getResources(), R.drawable.map1);
-            Rect src = new Rect(0, 0, bg.getWidth(), bg.getHeight());
-            Rect dest = new Rect(0, 0, width, height);
-            canvas.drawBitmap(bg, src, dest, null);
-            isInitBackground = true;
-            Log.i("BACKGROUND", "SETTER");
-        }
-        /** PROBLEM ECRASEMENT BACKGROUND */
-
         for(int i = 0; i < NB_CASE_LARGEUR; i++) {
             for(int j = 0; j < NB_CASE_HAUTEUR; j++) {
                 cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
@@ -193,17 +181,25 @@ public class GameView extends SurfaceView {
         });
     }
 
-    protected void getPersonnageControlableMenu() {
+    protected void getPersonnageControlableMenu(Cell c) {
         menu.show();
         action.show();
         selectedPersonnage = true;
+
+        // Afficher stats
+        selectedPersonnageStats.setVisibility(View.VISIBLE);
+        selectedPersonnageHp.setText(c.getPersonnage().hp + " HP");
+        selectedPersonnageMp.setText(c.getPersonnage().mp + " MP");
+        selectedPersonnageStats.bringToFront();
     }
 
-    protected void getPersonnageIncontrolableMenu() {
+    protected void getPersonnageIncontrolableMenu(Cell c) {
         menu.show();
 
-        // Afficher stats ou quelque chose comme ça
+        // Afficher stats
         selectedPersonnageStats.setVisibility(View.VISIBLE);
+        selectedPersonnageHp.setText(c.getPersonnage().hp + " HP");
+        selectedPersonnageMp.setText(c.getPersonnage().mp + " MP");
         selectedPersonnageStats.bringToFront();
     }
 
@@ -219,17 +215,23 @@ public class GameView extends SurfaceView {
        boolean hasPerso = c.getPersonnage() != null;
         if(hasPerso) {
            if(c.getPersonnage().getId() > 0) {
-               getPersonnageControlableMenu();
+               getPersonnageControlableMenu(c);
            } else {
-               getPersonnageIncontrolableMenu();
+               getPersonnageIncontrolableMenu(c);
            }
        }
     }
 
     protected void onSelectableCellTouchEvent(Cell c) {
-        c.getPersonnage().hp = 0;
+        if(c.getPersonnage().hp - 10 < 0) {
+            c.getPersonnage().hp = 0;
+            Toast.makeText(getContext(),"Ennemi a ete tue", Toast.LENGTH_LONG).show();
+        } else {
+            c.getPersonnage().hp -= 10;
+            Toast.makeText(getContext(),"Ennemi a perdu 10 hp", Toast.LENGTH_LONG).show();
+        }
         c.setFlagSelectable(false);
-        Toast.makeText(getContext(),"Ennemi a ete tue", Toast.LENGTH_LONG).show();
+        cancelPersonnageMenu();
     }
 
     protected void drawSelectableCells() {
