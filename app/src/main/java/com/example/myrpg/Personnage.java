@@ -14,10 +14,12 @@ public class Personnage extends GameObject {
     protected int atk;
     protected int def;
 
-    protected Bitmap bmp;
+    protected Bitmap bmp1;
+    protected Bitmap bmp2;
 
-    public Personnage(Bitmap bmp, boolean controlable) {
-        this.bmp = bmp;
+    public Personnage(Bitmap bmp1, Bitmap bmp2, boolean controlable) {
+        this.bmp1 = bmp1;
+        this.bmp2 = bmp2;
         this.hp = 100;
         this.previousHp = hp;
         this.mp = 100;
@@ -30,12 +32,12 @@ public class Personnage extends GameObject {
         }
     }
 
-    public Bitmap getBmp() {
-        return bmp;
+    public Bitmap getBmp1() {
+        return bmp1;
     }
 
-    public void setBmp(Bitmap bmp) {
-        this.bmp = bmp;
+    public void setBmp1(Bitmap bmp1) {
+        this.bmp1 = bmp1;
     }
 
     public int getId() {

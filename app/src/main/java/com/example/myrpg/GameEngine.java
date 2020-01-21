@@ -2,6 +2,7 @@ package com.example.myrpg;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
+import android.util.Log;
 
 public class GameEngine extends Thread {
 
@@ -19,10 +20,16 @@ public class GameEngine extends Thread {
     @SuppressLint("WrongCall")
     @Override
     public void run() {
+        boolean end= false;
         while (running) {
                 Canvas c = view.getHolder().lockCanvas();
                 synchronized (view.getHolder()) {
+                    end = view.isWin();
                     view.onDraw(c);
+                    if(end){
+                        Log.i("INTERRUPT GAME LOOP", "OK");
+                        running = false;
+                    }
                 }
                 if (c != null) {
                     view.getHolder().unlockCanvasAndPost(c);

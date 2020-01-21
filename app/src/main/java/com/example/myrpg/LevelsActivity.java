@@ -2,12 +2,15 @@ package com.example.myrpg;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LevelsActivity extends AppCompatActivity {
 
@@ -18,20 +21,23 @@ public class LevelsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.level_screen);
 
-        levels = (ListView) findViewById(R.id.levels);
+        levels = findViewById(R.id.levels);
 
-        String items [] = new String[3];
+        int levelDone = getIntent().getIntExtra("level", -1);
+
+        List<LevelsItem> items = new ArrayList<>(3);
         for(int i=0; i < 3; i++) {
-            items[i] = "Level " + i;
+            items.add(new LevelsItem("Level " + i,levelDone == i));
         }
 
-        ArrayAdapter<String> levelsAdapater =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        LevelsAdapter levelsAdapater = new LevelsAdapter(this, R.layout.level_item, items);
         levels.setAdapter(levelsAdapater);
+        levels.setItemsCanFocus(true);
 
         levels.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("LISENER ITEM", "OK");
                 goLevel(position);
             }
         });

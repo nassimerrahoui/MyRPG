@@ -61,17 +61,17 @@ public class Cell extends View {
                 myPaint.setStrokeWidth(10);
                 myPaint.setColor(Color.RED);
                 canvas.drawRect(x+10,y+10,x+cell_width-10,y+cell_height-10, myPaint);
-                canvas.drawBitmap(personnage.getBmp(), x + cell_width/4, y + cell_height/4, null);
+                canvas.drawBitmap(personnage.getBmp1(), x + cell_width/4, y + cell_height/4, null);
             } else if(personnage.hp < personnage.previousHp){
                 personnage.previousHp = personnage.hp;
                 if(personnage.hp == 0) {
                     //Log.i("PERSO NULL", "OK");
-                    personnage.getBmp().eraseColor(Color.TRANSPARENT);
+                    personnage.getBmp1().eraseColor(Color.TRANSPARENT);
                     personnage = null;
                 }
             } else {
                 //Log.i("PERSO HERE", "OK");
-                canvas.drawBitmap(personnage.getBmp(), x + cell_width/4, y + cell_height/4, null);
+                canvas.drawBitmap(personnage.getBmp1(), x + cell_width/4, y + cell_height/4, null);
             }
         } else {
             //Log.i("EMPTY CELL", "OK");

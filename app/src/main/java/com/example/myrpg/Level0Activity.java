@@ -1,6 +1,6 @@
 package com.example.myrpg;
 
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -11,11 +11,14 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class Level0Activity extends AppCompatActivity implements LevelFragment.OnFragmentInteractionListener {
 
+    private int id;
     LevelFragment level;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        id = 0;
 
         FrameLayout frame = new FrameLayout(this);
         frame.setId(R.id.level0activity);
@@ -31,9 +34,12 @@ public class Level0Activity extends AppCompatActivity implements LevelFragment.O
         ft.show(level);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
+    @Override
+    public void finishGame() {
+        Intent levels_screen = new Intent(this, LevelsActivity.class);
+        levels_screen.putExtra("level", id);
+        startActivity(levels_screen);
     }
 
     @Override
