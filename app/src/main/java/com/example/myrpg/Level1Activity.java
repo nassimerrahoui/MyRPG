@@ -9,9 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class Level0Activity extends AppCompatActivity implements LevelFragment.OnFragmentInteractionListener {
+public class Level1Activity extends AppCompatActivity implements LevelFragment.OnFragmentInteractionListener {
 
-    private final static int id = 0;
+    private final static int id = 1;
     LevelFragment level;
 
     @Override
@@ -19,14 +19,14 @@ public class Level0Activity extends AppCompatActivity implements LevelFragment.O
         super.onCreate(savedInstanceState);
 
         FrameLayout frame = new FrameLayout(this);
-        frame.setId(R.id.level0activity);
+        frame.setId(R.id.level1activity);
         setContentView(frame);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         level = new LevelFragment();
 
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.level0activity,level);
+        ft.add(R.id.level1activity,level);
         ft.commit();
 
         ft.show(level);

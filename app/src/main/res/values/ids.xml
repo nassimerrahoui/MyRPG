@@ -2,4 +2,5 @@
 <resources>
     <item name="menu" type="id"></item>
     <item name="level0activity" type="id"></item>
+    <item name="level1activity" type="id"></item>
 </resources>

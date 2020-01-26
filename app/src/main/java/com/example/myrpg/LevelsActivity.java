@@ -15,6 +15,7 @@ import java.util.List;
 public class LevelsActivity extends AppCompatActivity {
 
     ListView levels;
+    protected static ArrayList<Integer> levelsDone = new ArrayList<>(3);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +25,13 @@ public class LevelsActivity extends AppCompatActivity {
         levels = findViewById(R.id.levels);
 
         int levelDone = getIntent().getIntExtra("level", -1);
+        if(!levelsDone.contains(levelDone)) {
+            levelsDone.add(levelDone);
+        }
 
         List<LevelsItem> items = new ArrayList<>(3);
         for(int i=0; i < 3; i++) {
-            items.add(new LevelsItem("Level " + i,levelDone == i));
+            items.add(new LevelsItem("Level " + i,levelsDone.contains(i)));
         }
 
         LevelsAdapter levelsAdapater = new LevelsAdapter(this, R.layout.level_item, items);
@@ -49,6 +53,7 @@ public class LevelsActivity extends AppCompatActivity {
                 startActivity(new Intent(this,Level0Activity.class));
                 break;
             case 1:
+                startActivity(new Intent(this,Level1Activity.class));
                 break;
             case 2:
                 break;
