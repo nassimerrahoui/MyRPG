@@ -2,6 +2,8 @@ package com.example.myrpg.game;
 
 import android.graphics.Bitmap;
 
+import java.util.Random;
+
 public class Personnage extends GameObject {
 
     protected static int compteurIdControlable = 1;
@@ -13,6 +15,7 @@ public class Personnage extends GameObject {
     protected int mp;
     protected int atk;
     protected int def;
+    protected Random RNG;
 
     protected Bitmap bmp1;
     protected Bitmap bmp2;
@@ -27,6 +30,7 @@ public class Personnage extends GameObject {
         this.mp = 100;
         this.atk = 10;
         this.def = 10;
+        this.RNG = new Random();
         this.animationFrame = false;
         if(controlable) {
             this.id = Personnage.compteurIdControlable++;

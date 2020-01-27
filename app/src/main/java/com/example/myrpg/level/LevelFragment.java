@@ -20,12 +20,25 @@ import java.util.ArrayList;
 
 public class LevelFragment extends Fragment {
 
-    GameView gameView;
-
     private OnFragmentInteractionListener mListener;
+
+    private static final String level_id = "level_id";
+    private int levelId;
 
     public LevelFragment() {
         // Required empty public constructor
+    }
+
+    public LevelFragment(int levelId) {
+        this.levelId = levelId;
+    }
+
+    public static LevelFragment newInstance(int levelId) {
+        LevelFragment fragment = new LevelFragment();
+        Bundle args = new Bundle();
+        args.putInt(level_id, levelId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -58,7 +71,7 @@ public class LevelFragment extends Fragment {
         stats.add(selectedPersonnageHp);
         stats.add(selectedPersonnageMp);
 
-        gameView = new GameView(getContext(), buttons, stats, mListener);
+        GameView gameView = new GameView(getContext(), levelId, buttons, stats, mListener);
 
         c.addView(gameView);
 

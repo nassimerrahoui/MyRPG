@@ -1,12 +1,9 @@
 <resources>
     <string name="app_name">MyRPG</string>
     <string name="start">MyRPG \n Touch to start</string>
-    <string name="story_mode">Story Mode</string>
-    <string name="options">Options</string>
+    <string name="continue_mode">Continue</string>
+    <string name="story_mode">Story mode</string>
+    <string name="new_game_mode">New Game</string>
     <string name="quit">Quit</string>
     <string name="submit">submit</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_main2">Main2Activity</string>
 </resources>

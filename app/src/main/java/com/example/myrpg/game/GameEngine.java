@@ -17,6 +17,8 @@ public class GameEngine extends Thread {
         running = run;
     }
 
+    public boolean isRunning() { return running;}
+
     @SuppressLint("WrongCall")
     @Override
     public void run() {

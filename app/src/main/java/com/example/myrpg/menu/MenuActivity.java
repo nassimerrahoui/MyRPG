@@ -1,6 +1,7 @@
 package com.example.myrpg.menu;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,8 +12,8 @@ import com.example.myrpg.R;
 
 public class MenuActivity extends AppCompatActivity {
 
-    Button story_mode;
-    Button options;
+    Button continue_mode;
+    Button new_game_mode;
     Button quit;
 
     @Override
@@ -20,21 +21,21 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_screen);
 
-        story_mode = (Button) findViewById(R.id.story_mode);
-        options = (Button) findViewById(R.id.options);
+        continue_mode = (Button) findViewById(R.id.continue_mode);
+        new_game_mode = (Button) findViewById(R.id.new_game_mode);
         quit = (Button) findViewById(R.id.quit);
 
-        story_mode.setOnClickListener(new View.OnClickListener() {
+        continue_mode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goStoryMode();
+                goContinueMode();
             }
         });
 
-        options.setOnClickListener(new View.OnClickListener() {
+        new_game_mode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goOptions();
+                goNewGameMode();
             }
         });
 
@@ -44,18 +45,22 @@ public class MenuActivity extends AppCompatActivity {
                 goQuit();
             }
         });
+
     }
 
-    public void goStoryMode() {
+    public void goContinueMode() {
         startActivity(new Intent(this, LevelsActivity.class));
     }
 
-    public void goOptions() {
-        startActivity(new Intent(this, MainActivity.class));
+    public void goNewGameMode() {
+        SharedPreferences.Editor edit = this.getSharedPreferences("PROGRESSION",MODE_PRIVATE).edit();
+        edit.clear();
+        edit.apply();
+        startActivity(new Intent(this, LevelsActivity.class));
     }
 
     public void goQuit() {
-        startActivity(new Intent(this,MainActivity.class));
+        finishAffinity();
     }
 
     @Override

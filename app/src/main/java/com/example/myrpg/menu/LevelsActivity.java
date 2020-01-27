@@ -1,6 +1,7 @@
 package com.example.myrpg.menu;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,10 +34,22 @@ public class LevelsActivity extends AppCompatActivity {
         if(!levelsDone.contains(levelDone)) {
             levelsDone.add(levelDone);
         }
+        SharedPreferences progression = getSharedPreferences("PROGRESSION", MODE_PRIVATE);
+        for(int i=0; i < 3; i++) {
+            String levelDoneSharedPreferences = progression.getString("Level " + i,"false");
+            if(levelDoneSharedPreferences.equals("true") && !levelsDone.contains(i)) {
+                levelsDone.add(i);
+            }
+        }
+
 
         List<LevelsItem> items = new ArrayList<>(3);
         for(int i=0; i < 3; i++) {
-            items.add(new LevelsItem("Level " + i,levelsDone.contains(i)));
+            Boolean levelCleared = levelsDone.contains(i);
+            items.add(new LevelsItem("Level " + i, levelCleared));
+            SharedPreferences.Editor edit = progression.edit();
+            edit.putString("Level " + i, levelCleared.toString());
+            edit.apply();
         }
 
         LevelsAdapter levelsAdapater = new LevelsAdapter(this, R.layout.level_item, items);

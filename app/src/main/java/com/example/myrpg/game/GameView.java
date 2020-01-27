@@ -5,14 +5,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -43,6 +43,7 @@ public class GameView extends SurfaceView {
     protected int height;
     private SurfaceHolder holder;
     private Drawable bg;
+    private int levelId;
 
     /** attributs des cellules du jeu */
     protected final static int NB_CASE_LARGEUR = 10;
@@ -56,8 +57,8 @@ public class GameView extends SurfaceView {
     private boolean isWin;
 
     /** attributs concernant les personnageControlables */
-    private ArrayList<Personnage> personnageControlables = new ArrayList<Personnage>();
-    private ArrayList<Personnage> personnageIncontrolables = new ArrayList<Personnage>();
+    protected ArrayList<Personnage> personnageControlables = new ArrayList<Personnage>();
+    protected ArrayList<Personnage> personnageIncontrolables = new ArrayList<Personnage>();
     private FloatingActionButton menu;
     private FloatingActionButton action;
     private final static ReentrantLock lock = new ReentrantLock();
@@ -69,10 +70,10 @@ public class GameView extends SurfaceView {
     private TextView selectedPersonnageName;
     private TextView selectedPersonnageHp;
     private TextView selectedPersonnageMp;
-    private boolean selectedPersonnage;
+    private Personnage selectedPersonnage;
 
 
-    public GameView(Context context, ArrayList<View> buttons, ArrayList<View> stats, LevelFragment.OnFragmentInteractionListener listener) {
+    public GameView(Context context, int levelId, ArrayList<View> buttons, ArrayList<View> stats, LevelFragment.OnFragmentInteractionListener listener) {
         super(context);
 
         //set listener
@@ -82,6 +83,9 @@ public class GameView extends SurfaceView {
         //bg = ContextCompat.getDrawable(context, R.drawable.map1);
         //setBackground(bg);
         setBackgroundColor(Color.TRANSPARENT);
+
+        // level
+        this.levelId = levelId;
 
         // recuperation de la taille de l'ecran
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -116,7 +120,9 @@ public class GameView extends SurfaceView {
 
         // construction des boutons
         menu = (FloatingActionButton) buttons.get(0);
+        menu.setImageResource(R.drawable.cancel);
         action = (FloatingActionButton) buttons.get(1);
+        action.setImageResource(R.drawable.sword);
         createListener();
 
         // affichage des stats
@@ -125,7 +131,7 @@ public class GameView extends SurfaceView {
         selectedPersonnageName = (TextView) stats.get(2);
         selectedPersonnageHp = (TextView) stats.get(3);
         selectedPersonnageMp = (TextView) stats.get(4);
-        selectedPersonnage = false;
+        selectedPersonnage = null;
 
         gameLoop();
     }
@@ -165,9 +171,11 @@ public class GameView extends SurfaceView {
     @Override
     protected void onDraw(Canvas canvas) {
         if(!isWin) {
-            for (int i = 0; i < NB_CASE_LARGEUR; i++) {
-                for (int j = 0; j < NB_CASE_HAUTEUR; j++) {
-                    cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
+            if(gameEngine.isRunning()) {
+                for (int i = 0; i < NB_CASE_LARGEUR; i++) {
+                    for (int j = 0; j < NB_CASE_HAUTEUR; j++) {
+                        cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
+                    }
                 }
             }
         } else {
@@ -193,22 +201,8 @@ public class GameView extends SurfaceView {
     }
 
     public void createsPersonnages() {
-        Bitmap p1_bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.char1_right);
-        Bitmap mutable_p1_bmp = p1_bmp.copy(Bitmap.Config.ARGB_8888, true);
-        Bitmap p1_bmp2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.char1_right);
-        Bitmap mutable_p1_bmp2 = p1_bmp2.copy(Bitmap.Config.ARGB_8888, true);
-        Personnage p1 = new Personnage(mutable_p1_bmp, mutable_p1_bmp2, true);
-        cells.get(4).get(4).setPersonnage(p1);
-        personnageControlables.add(p1);
-
-
-        Bitmap p2_bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.incontrolable);
-        Bitmap mutable_p2_bmp = p2_bmp.copy(Bitmap.Config.ARGB_8888, true);
-        Bitmap p2_bmp2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.incontrolable_2);
-        Bitmap mutable_p2_bmp2 = p2_bmp.copy(Bitmap.Config.ARGB_8888, true);
-        Personnage p2 = new Personnage(mutable_p2_bmp, mutable_p2_bmp2, false);
-        cells.get(2).get(2).setPersonnage(p2);
-        personnageIncontrolables.add(p2);
+        GeneratePersonnage.createPersonnagesControlables(this,cells,levelId);
+        GeneratePersonnage.createPersonnagesIncontrolables(this,cells,levelId);
     }
 
     public void createListener() {
@@ -232,7 +226,10 @@ public class GameView extends SurfaceView {
     protected void getPersonnageControlableMenu(Cell c) {
         menu.show();
         action.show();
-        selectedPersonnage = true;
+        selectedPersonnage = c.getPersonnage();
+
+        MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.unshit);
+        mp.start();
 
         // Afficher stats
         selectedPersonnageStats.setVisibility(View.VISIBLE);
@@ -257,7 +254,7 @@ public class GameView extends SurfaceView {
         menu.hide();
         action.hide();
         selectedPersonnageStats.setVisibility(View.GONE);
-        selectedPersonnage = false;
+        selectedPersonnage = null;
         resetSelectableCells();
     }
 
@@ -274,13 +271,19 @@ public class GameView extends SurfaceView {
 
     protected void onSelectableCellTouchEvent(Cell c) {
         // - 100000 pour le test
-        if(c.getPersonnage().hp - 100000 <= 0) {
-            c.getPersonnage().hp = 0;
-            personnageIncontrolables.remove(c.getPersonnage());
+        MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.swing3);
+        mp.start();
+        Personnage p = c.getPersonnage();
+        int dmg = p.def + p.RNG.nextInt(6) - 3 + selectedPersonnage.atk + selectedPersonnage.RNG.nextInt( 10) - 5;
+        if(p.hp - dmg <= 0) {
+            p.hp = 0;
+            personnageIncontrolables.remove(p);
+            mp = MediaPlayer.create(getContext(), R.raw.ogre2);
+            mp.start();
             Toast.makeText(getContext(),"Ennemi a ete tue", Toast.LENGTH_SHORT).show();
         } else {
-            c.getPersonnage().hp -= 10;
-            Toast.makeText(getContext(),"Ennemi a perdu 10 hp", Toast.LENGTH_SHORT).show();
+            c.getPersonnage().hp -= dmg;
+            Toast.makeText(getContext(),"Ennemi a perdu " + dmg + " hp", Toast.LENGTH_SHORT).show();
         }
         c.setFlagSelectable(false);
         cancelPersonnageMenu();
@@ -293,13 +296,14 @@ public class GameView extends SurfaceView {
         for(Personnage p: personnageIncontrolables) {
             Collections.shuffle(personnageControlables);
             Personnage controlable = personnageControlables.get(0);
-            if(controlable.hp - 10 <= 0) {
+            int dmg = controlable.def + controlable.RNG.nextInt(10) - 5 + p.atk + p.RNG.nextInt( 6) - 3;
+            if(controlable.hp - dmg <= 0) {
                 controlable.hp = 0;
                 personnageControlables.remove(controlable);
                 Toast.makeText(getContext(),"Novice es muerto", Toast.LENGTH_SHORT).show();
             } else {
-                controlable.hp -= 10;
-                Toast.makeText(getContext(),"Novice a perdu 10 hp", Toast.LENGTH_SHORT).show();
+                controlable.hp -= dmg;
+                Toast.makeText(getContext(),"Novice a perdu " + dmg +" hp", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -343,7 +347,7 @@ public class GameView extends SurfaceView {
 
         Cell c = cells.get(cellX).get(cellY);
 
-        if(!selectedPersonnage) { onCellTouchEvent(c); }
+        if(selectedPersonnage == null) { onCellTouchEvent(c); }
         else {
             if(c.flagSelectable) {
                 onSelectableCellTouchEvent(c);
@@ -355,5 +359,22 @@ public class GameView extends SurfaceView {
 
     public boolean isWin() {
         return isWin;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
+            try {
+                gameEngine.wait();
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
     }
 }

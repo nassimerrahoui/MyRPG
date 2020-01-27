@@ -26,7 +26,7 @@ public class Level1Activity extends AppCompatActivity implements LevelFragment.O
         setContentView(frame);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        level = new LevelFragment();
+        level = new LevelFragment(id);
 
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.add(R.id.level1activity,level);
