@@ -1,4 +1,4 @@
-package com.example.myrpg;
+package com.example.myrpg.game;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;

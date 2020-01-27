@@ -1,4 +1,4 @@
-package com.example.myrpg;
+package com.example.myrpg.level;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,9 @@ import android.widget.FrameLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.example.myrpg.R;
+import com.example.myrpg.menu.LevelsActivity;
 
 public class Level0Activity extends AppCompatActivity implements LevelFragment.OnFragmentInteractionListener {
 
@@ -31,7 +34,6 @@ public class Level0Activity extends AppCompatActivity implements LevelFragment.O
 
         ft.show(level);
     }
-
 
     @Override
     public void finishGame() {

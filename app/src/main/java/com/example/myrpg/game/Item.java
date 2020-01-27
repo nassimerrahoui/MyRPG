@@ -1,4 +1,4 @@
-package com.example.myrpg;
+package com.example.myrpg.game;
 
 public class Item {
 

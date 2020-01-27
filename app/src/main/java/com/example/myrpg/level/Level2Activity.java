@@ -1,4 +1,4 @@
-package com.example.myrpg;
+package com.example.myrpg.level;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,9 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class Level1Activity extends AppCompatActivity implements LevelFragment.OnFragmentInteractionListener {
+import com.example.myrpg.R;
+import com.example.myrpg.menu.LevelsActivity;
 
-    private final static int id = 1;
+public class Level2Activity extends AppCompatActivity implements LevelFragment.OnFragmentInteractionListener {
+
+    private final static int id = 2;
     LevelFragment level;
 
     @Override
@@ -19,14 +22,14 @@ public class Level1Activity extends AppCompatActivity implements LevelFragment.O
         super.onCreate(savedInstanceState);
 
         FrameLayout frame = new FrameLayout(this);
-        frame.setId(R.id.level1activity);
+        frame.setId(R.id.level2activity);
         setContentView(frame);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         level = new LevelFragment();
 
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.level1activity,level);
+        ft.add(R.id.level2activity,level);
         ft.commit();
 
         ft.show(level);

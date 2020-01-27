@@ -1,9 +1,10 @@
-package com.example.myrpg;
+package com.example.myrpg.game;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.View;
 
 public class Cell extends View {
@@ -71,7 +72,15 @@ public class Cell extends View {
                 }
             } else {
                 //Log.i("PERSO HERE", "OK");
-                canvas.drawBitmap(personnage.getBmp1(), x + cell_width/4, y + cell_height/4, null);
+                if(personnage.animationFrame) {
+                    Log.i("PERSO HERE", "BMP 1");
+                    canvas.drawBitmap(personnage.getBmp1(), x + cell_width/4, y + cell_height/4, null);
+                    personnage.animationFrame = false;
+                } else {
+                    Log.i("PERSO HERE", "BMP 2");
+                    canvas.drawBitmap(personnage.getBmp2(), x + cell_width/4, y + cell_height/4, null);
+                    personnage.animationFrame = true;
+                }
             }
         } else {
             //Log.i("EMPTY CELL", "OK");

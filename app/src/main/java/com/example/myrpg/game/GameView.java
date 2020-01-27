@@ -1,4 +1,4 @@
-package com.example.myrpg;
+package com.example.myrpg.game;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -22,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myrpg.R;
+import com.example.myrpg.level.LevelFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -161,7 +164,6 @@ public class GameView extends SurfaceView {
     @SuppressLint("WrongCall")
     @Override
     protected void onDraw(Canvas canvas) {
-
         if(!isWin) {
             for (int i = 0; i < NB_CASE_LARGEUR; i++) {
                 for (int j = 0; j < NB_CASE_HAUTEUR; j++) {
@@ -234,6 +236,7 @@ public class GameView extends SurfaceView {
 
         // Afficher stats
         selectedPersonnageStats.setVisibility(View.VISIBLE);
+        selectedPersonnageImage.setBackground(new BitmapDrawable(getResources(),c.personnage.getBmp1()));
         selectedPersonnageHp.setText(c.getPersonnage().hp + " HP");
         selectedPersonnageMp.setText(c.getPersonnage().mp + " MP");
         selectedPersonnageStats.bringToFront();
@@ -244,6 +247,7 @@ public class GameView extends SurfaceView {
 
         // Afficher stats
         selectedPersonnageStats.setVisibility(View.VISIBLE);
+        selectedPersonnageImage.setBackground(new BitmapDrawable(getResources(),c.personnage.getBmp1()));
         selectedPersonnageHp.setText(c.getPersonnage().hp + " HP");
         selectedPersonnageMp.setText(c.getPersonnage().mp + " MP");
         selectedPersonnageStats.bringToFront();
@@ -269,6 +273,7 @@ public class GameView extends SurfaceView {
     }
 
     protected void onSelectableCellTouchEvent(Cell c) {
+        // - 100000 pour le test
         if(c.getPersonnage().hp - 100000 <= 0) {
             c.getPersonnage().hp = 0;
             personnageIncontrolables.remove(c.getPersonnage());

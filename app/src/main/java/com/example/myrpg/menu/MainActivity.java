@@ -1,4 +1,4 @@
-package com.example.myrpg;
+package com.example.myrpg.menu;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.example.myrpg.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void start() {
-        startActivity(new Intent(this,MenuActivity.class));
+        startActivity(new Intent(this, MenuActivity.class));
     }
 
     @Override

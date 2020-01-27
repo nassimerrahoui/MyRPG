@@ -1,4 +1,4 @@
-package com.example.myrpg;
+package com.example.myrpg.menu;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.myrpg.R;
+import com.example.myrpg.level.Level0Activity;
+import com.example.myrpg.level.Level1Activity;
+import com.example.myrpg.level.Level2Activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,12 +55,13 @@ public class LevelsActivity extends AppCompatActivity {
     public void goLevel(int position) {
         switch (position) {
             case 0:
-                startActivity(new Intent(this,Level0Activity.class));
+                startActivity(new Intent(this, Level0Activity.class));
                 break;
             case 1:
-                startActivity(new Intent(this,Level1Activity.class));
+                startActivity(new Intent(this, Level1Activity.class));
                 break;
             case 2:
+                startActivity(new Intent(this, Level2Activity.class));
                 break;
             default:
                 break;

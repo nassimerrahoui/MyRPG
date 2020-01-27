@@ -1,3 +1,3 @@
-package com.example.myrpg;
+package com.example.myrpg.game;
 
 public abstract class GameObject { }
