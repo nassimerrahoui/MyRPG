@@ -35,21 +35,6 @@ public class Cell extends View {
         this.personnage = personnage;
     }
 
-    protected void update(Move m) {
-        switch (m) {
-            case up:
-                break;
-            case down:
-                break;
-            case right:
-                break;
-            case left:
-                break;
-            default:
-                break;
-        }
-    }
-
     public void onDraw(Canvas canvas, int cell_width, int cell_height) {
 
         Paint myPaint = new Paint();
@@ -73,11 +58,9 @@ public class Cell extends View {
             } else {
                 //Log.i("PERSO HERE", "OK");
                 if(personnage.animationFrame) {
-                    Log.i("PERSO HERE", "BMP 1");
                     canvas.drawBitmap(personnage.getBmp1(), x + cell_width/4, y + cell_height/4, null);
                     personnage.animationFrame = false;
                 } else {
-                    Log.i("PERSO HERE", "BMP 2");
                     canvas.drawBitmap(personnage.getBmp2(), x + cell_width/4, y + cell_height/4, null);
                     personnage.animationFrame = true;
                 }

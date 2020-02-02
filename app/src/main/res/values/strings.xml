@@ -6,4 +6,16 @@
     <string name="new_game_mode">New Game</string>
     <string name="quit">Quit</string>
     <string name="submit">submit</string>
+    <string name="level_title">Level </string>
+    <string name="lost">NO PASARAN MAMAMIA...</string>
+    <string name="lost_msg">Volver a intentar</string>
+    <string name="win">¡SE PASARAN MUY BIEN!</string>
+    <string name="win_msg">Siguiente nivel</string>
+    <string name="HP"> HP</string>
+    <string name="MP"> MP</string>
+    <string name="enemy_down">Ennemi a été tué</string>
+    <string name="enemy_hurt">Ennemi a perdu </string>
+    <string name="player_down">Principiante esta muerto</string>
+    <string name="player_hurt">Principiante ha perdido </string>
+    <string name="level">Level </string>
 </resources>

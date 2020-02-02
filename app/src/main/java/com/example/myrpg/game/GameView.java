@@ -11,6 +11,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -171,7 +172,26 @@ public class GameView extends SurfaceView {
     @Override
     protected void onDraw(Canvas canvas) {
         if(!isWin) {
-            if(gameEngine.isRunning()) {
+            if(isLost()) {
+                ((Activity) getContext()).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setCancelable(true);
+                        builder.setTitle(getResources().getString(R.string.level_title)+levelId);
+                        builder.setMessage(getResources().getString(R.string.lost));
+                        builder.setPositiveButton(getResources().getString(R.string.lost_msg), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                listener.finishGame(false);
+                            }
+                        });
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                });
+            } else if(gameEngine.isRunning()) {
                 for (int i = 0; i < NB_CASE_LARGEUR; i++) {
                     for (int j = 0; j < NB_CASE_HAUTEUR; j++) {
                         cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
@@ -184,12 +204,12 @@ public class GameView extends SurfaceView {
                 public void run() {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setCancelable(true);
-                    builder.setTitle("Title");
-                    builder.setMessage("YOU WIN!");
-                    builder.setPositiveButton("Next Level", new DialogInterface.OnClickListener() {
+                    builder.setTitle(getResources().getString(R.string.level_title) + levelId);
+                    builder.setMessage(getResources().getString(R.string.win));
+                    builder.setPositiveButton(getResources().getString(R.string.win_msg), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            listener.finishGame();
+                            listener.finishGame(true);
                         }
                     });
 
@@ -234,8 +254,8 @@ public class GameView extends SurfaceView {
         // Afficher stats
         selectedPersonnageStats.setVisibility(View.VISIBLE);
         selectedPersonnageImage.setBackground(new BitmapDrawable(getResources(),c.personnage.getBmp1()));
-        selectedPersonnageHp.setText(c.getPersonnage().hp + " HP");
-        selectedPersonnageMp.setText(c.getPersonnage().mp + " MP");
+        selectedPersonnageHp.setText(c.getPersonnage().hp + getResources().getString(R.string.HP));
+        selectedPersonnageMp.setText(c.getPersonnage().mp + getResources().getString(R.string.MP));
         selectedPersonnageStats.bringToFront();
     }
 
@@ -245,8 +265,8 @@ public class GameView extends SurfaceView {
         // Afficher stats
         selectedPersonnageStats.setVisibility(View.VISIBLE);
         selectedPersonnageImage.setBackground(new BitmapDrawable(getResources(),c.personnage.getBmp1()));
-        selectedPersonnageHp.setText(c.getPersonnage().hp + " HP");
-        selectedPersonnageMp.setText(c.getPersonnage().mp + " MP");
+        selectedPersonnageHp.setText(c.getPersonnage().hp + getResources().getString(R.string.HP));
+        selectedPersonnageMp.setText(c.getPersonnage().mp + getResources().getString(R.string.MP));
         selectedPersonnageStats.bringToFront();
     }
 
@@ -261,7 +281,7 @@ public class GameView extends SurfaceView {
     protected void onCellTouchEvent(Cell c) {
        boolean hasPerso = c.getPersonnage() != null;
         if(hasPerso) {
-           if(c.getPersonnage().getId() > 0) {
+           if(c.getPersonnage().getId() > 0 && !c.getPersonnage().hasMoved) {
                getPersonnageControlableMenu(c);
            } else {
                getPersonnageIncontrolableMenu(c);
@@ -280,19 +300,18 @@ public class GameView extends SurfaceView {
             personnageIncontrolables.remove(p);
             mp = MediaPlayer.create(getContext(), R.raw.ogre2);
             mp.start();
-            Toast.makeText(getContext(),"Ennemi a ete tue", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.enemy_down), Toast.LENGTH_SHORT).show();
         } else {
             c.getPersonnage().hp -= dmg;
-            Toast.makeText(getContext(),"Ennemi a perdu " + dmg + " hp", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),getResources().getString(R.string.enemy_hurt) + dmg + getResources().getString(R.string.HP), Toast.LENGTH_SHORT).show();
         }
         c.setFlagSelectable(false);
+        int indexSelectecPersonnage = personnageControlables.indexOf(selectedPersonnage);
+        personnageControlables.get(indexSelectecPersonnage).setHasMoved(true);
         cancelPersonnageMenu();
     }
 
     protected void ennemyAction(){
-        if(personnageIncontrolables.size() == 0) {
-            isWin = true;
-        }
         for(Personnage p: personnageIncontrolables) {
             Collections.shuffle(personnageControlables);
             Personnage controlable = personnageControlables.get(0);
@@ -300,10 +319,10 @@ public class GameView extends SurfaceView {
             if(controlable.hp - dmg <= 0) {
                 controlable.hp = 0;
                 personnageControlables.remove(controlable);
-                Toast.makeText(getContext(),"Novice es muerto", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),getResources().getString(R.string.player_down), Toast.LENGTH_SHORT).show();
             } else {
                 controlable.hp -= dmg;
-                Toast.makeText(getContext(),"Novice a perdu " + dmg +" hp", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),getResources().getString(R.string.player_hurt) + dmg + getResources().getString(R.string.HP), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -339,26 +358,48 @@ public class GameView extends SurfaceView {
         int cellY = (int) y / cell_height;
 
         // eviter debordement
-        if(cellX >= NB_CASE_LARGEUR)
+        if (cellX >= NB_CASE_LARGEUR)
             cellX = NB_CASE_LARGEUR;
         // eviter debordement
-        if(cellY >= NB_CASE_HAUTEUR)
+        if (cellY >= NB_CASE_HAUTEUR)
             cellY = NB_CASE_HAUTEUR;
 
         Cell c = cells.get(cellX).get(cellY);
 
-        if(selectedPersonnage == null) { onCellTouchEvent(c); }
-        else {
-            if(c.flagSelectable) {
+        if (selectedPersonnage == null) {
+            onCellTouchEvent(c);
+        } else {
+            if (c.flagSelectable) {
                 onSelectableCellTouchEvent(c);
-                ennemyAction();
+            }
+        }
+        if(personnageIncontrolables.size() == 0) {
+            isWin = true;
+        }
+        if(allControllablesMoved(personnageControlables)) {
+            ennemyAction();
+            for(Personnage p: personnageControlables) {
+                p.setHasMoved(false);
             }
         }
         return super.onTouchEvent(event);
     }
 
+    public boolean allControllablesMoved(ArrayList<Personnage> controlables) {
+        for(int i = 0; i < controlables.size(); i++) {
+            if(!controlables.get(i).hasMoved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean isWin() {
         return isWin;
+    }
+
+    public boolean isLost() {
+        return personnageControlables.size() <= 0;
     }
 
     @Override

@@ -26,10 +26,9 @@ public class GameEngine extends Thread {
         while (running) {
                 Canvas c = view.getHolder().lockCanvas();
                 synchronized (view.getHolder()) {
-                    end = view.isWin();
+                    end = view.isWin() || view.isLost();
                     view.onDraw(c);
                     if(end){
-                        Log.i("INTERRUPT GAME LOOP", "OK");
                         running = false;
                     }
                 }

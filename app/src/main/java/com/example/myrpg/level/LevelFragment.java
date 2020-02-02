@@ -96,6 +96,6 @@ public class LevelFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void finishGame();
+        void finishGame(boolean terminated);
     }
 }

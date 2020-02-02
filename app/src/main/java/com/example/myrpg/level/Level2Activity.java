@@ -41,9 +41,10 @@ public class Level2Activity extends AppCompatActivity implements LevelFragment.O
     }
 
     @Override
-    public void finishGame() {
+    public void finishGame(boolean terminated) {
         Intent levels_screen = new Intent(this, LevelsActivity.class);
         levels_screen.putExtra("level", id);
+        levels_screen.putExtra("terminated", terminated);
         startActivity(levels_screen);
     }
 

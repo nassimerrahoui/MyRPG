@@ -31,7 +31,8 @@ public class LevelsActivity extends AppCompatActivity {
         levels = findViewById(R.id.levels);
 
         int levelDone = getIntent().getIntExtra("level", -1);
-        if(!levelsDone.contains(levelDone)) {
+        boolean isDone = getIntent().getBooleanExtra("terminated", false);
+        if(!levelsDone.contains(levelDone) && isDone) {
             levelsDone.add(levelDone);
         }
         SharedPreferences progression = getSharedPreferences("PROGRESSION", MODE_PRIVATE);
@@ -59,7 +60,6 @@ public class LevelsActivity extends AppCompatActivity {
         levels.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("LISENER ITEM", "OK");
                 goLevel(position);
             }
         });
