@@ -254,8 +254,9 @@ public class GameView extends SurfaceView {
         // Afficher stats
         selectedPersonnageStats.setVisibility(View.VISIBLE);
         selectedPersonnageImage.setBackground(new BitmapDrawable(getResources(),c.personnage.getBmp1()));
-        selectedPersonnageHp.setText(c.getPersonnage().hp + getResources().getString(R.string.HP));
-        selectedPersonnageMp.setText(c.getPersonnage().mp + getResources().getString(R.string.MP));
+        selectedPersonnageName.setText(selectedPersonnage.name);
+        selectedPersonnageHp.setText(selectedPersonnage.hp + getResources().getString(R.string.HP));
+        selectedPersonnageMp.setText(selectedPersonnage.mp + getResources().getString(R.string.MP));
         selectedPersonnageStats.bringToFront();
     }
 
@@ -265,6 +266,7 @@ public class GameView extends SurfaceView {
         // Afficher stats
         selectedPersonnageStats.setVisibility(View.VISIBLE);
         selectedPersonnageImage.setBackground(new BitmapDrawable(getResources(),c.personnage.getBmp1()));
+        selectedPersonnageName.setText(c.getPersonnage().name);
         selectedPersonnageHp.setText(c.getPersonnage().hp + getResources().getString(R.string.HP));
         selectedPersonnageMp.setText(c.getPersonnage().mp + getResources().getString(R.string.MP));
         selectedPersonnageStats.bringToFront();

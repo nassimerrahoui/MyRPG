@@ -10,7 +10,7 @@ public class Personnage {
     protected static int compteurIdControlable = 1;
     protected static int compteurIdIncontrolable = -1;
     protected final int id;
-    protected String name;
+    protected final String name;
     protected int hp;
     protected int previousHp;
     protected int mp;
@@ -37,8 +37,10 @@ public class Personnage {
         this.animationFrame = false;
         if(controlable) {
             this.id = Personnage.compteurIdControlable++;
+            this.name = "Principiante";
         } else {
             this.id = Personnage.compteurIdIncontrolable--;
+            this.name = "El diablo";
         }
     }
 
