@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".menu.MainActivity"
-    android:id="@+id/title_screen">
+    android:id="@+id/title_screen"
+    android:background="@drawable/sky">
 
     <TextView
         android:id="@+id/title"
@@ -16,7 +17,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/start">
+        android:text="@string/start"
+        android:fontFamily="serif-monospace"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_view_menu_size">
     </TextView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

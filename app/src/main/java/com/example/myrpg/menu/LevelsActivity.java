@@ -1,7 +1,10 @@
 package com.example.myrpg.menu;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -60,6 +63,8 @@ public class LevelsActivity extends AppCompatActivity {
         levels.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MediaPlayer mp = MediaPlayer.create(getBaseContext(), R.raw.swing3);
+                mp.start();
                 goLevel(position);
             }
         });
