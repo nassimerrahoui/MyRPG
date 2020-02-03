@@ -12,6 +12,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.myrpg.R;
 import com.example.myrpg.menu.LevelsActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Level2Activity extends AppCompatActivity implements LevelFragment.OnFragmentInteractionListener {
 
     private final static int id = 2;
@@ -45,6 +49,8 @@ public class Level2Activity extends AppCompatActivity implements LevelFragment.O
         Intent levels_screen = new Intent(this, LevelsActivity.class);
         levels_screen.putExtra("level", id);
         levels_screen.putExtra("terminated", terminated);
+        final Date date = new Date();
+        levels_screen.putExtra("date", new SimpleDateFormat("dd-MM-yyyy", Locale.FRANCE).format(date));
         startActivity(levels_screen);
     }
 

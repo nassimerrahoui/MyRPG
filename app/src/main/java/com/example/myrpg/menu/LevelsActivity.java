@@ -1,12 +1,9 @@
 package com.example.myrpg.menu;
 
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -25,6 +22,7 @@ public class LevelsActivity extends AppCompatActivity {
 
     ListView levels;
     protected static ArrayList<Integer> levelsDone = new ArrayList<>(3);
+    protected static ArrayList<String> dateLevelsDone = new ArrayList<>(3);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +33,18 @@ public class LevelsActivity extends AppCompatActivity {
 
         int levelDone = getIntent().getIntExtra("level", -1);
         boolean isDone = getIntent().getBooleanExtra("terminated", false);
+        String dateLevelDone = getIntent().getStringExtra("date");
         if(!levelsDone.contains(levelDone) && isDone) {
             levelsDone.add(levelDone);
+            dateLevelsDone.add(dateLevelDone);
         }
         SharedPreferences progression = getSharedPreferences("PROGRESSION", MODE_PRIVATE);
         for(int i=0; i < 3; i++) {
             String levelDoneSharedPreferences = progression.getString("Level " + i,"false");
+            String dateLevelDoneSharedPreferences = progression.getString("Date " + i,"");
             if(levelDoneSharedPreferences.equals("true") && !levelsDone.contains(i)) {
                 levelsDone.add(i);
+                dateLevelsDone.add(dateLevelDoneSharedPreferences);
             }
         }
 
@@ -50,9 +52,16 @@ public class LevelsActivity extends AppCompatActivity {
         List<LevelsItem> items = new ArrayList<>(3);
         for(int i=0; i < 3; i++) {
             Boolean levelCleared = levelsDone.contains(i);
-            items.add(new LevelsItem("Level " + i, levelCleared));
+            LevelsItem l;
+            if(levelCleared) {
+                l = new LevelsItem("Level " + i, levelCleared, dateLevelsDone.get(i));
+            } else {
+                l = new LevelsItem("Level " + i, levelCleared, "");
+            }
+            items.add(l);
             SharedPreferences.Editor edit = progression.edit();
             edit.putString("Level " + i, levelCleared.toString());
+            edit.putString("Date " + i, l.date);
             edit.apply();
         }
 
@@ -63,8 +72,6 @@ public class LevelsActivity extends AppCompatActivity {
         levels.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MediaPlayer mp = MediaPlayer.create(getBaseContext(), R.raw.swing3);
-                mp.start();
                 goLevel(position);
             }
         });

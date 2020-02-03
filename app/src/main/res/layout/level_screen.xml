@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".menu.LevelsActivity">
+    tools:context=".menu.LevelsActivity"
+    android:background="@drawable/sky">
 
     <TextView
         android:id="@+id/title"
@@ -15,6 +16,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:text="@string/story_mode"
+        android:textColor="@android:color/white"
         android:textSize="@android:dimen/app_icon_size"/>
 
     <ListView

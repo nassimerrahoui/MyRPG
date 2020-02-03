@@ -24,6 +24,7 @@ public class LevelsAdapter extends ArrayAdapter<LevelsItem> {
         int position;
         public TextView title;
         public CheckBox checkbox;
+        public TextView date_level;
     }
 
     public LevelsAdapter(@NonNull Context context, int resource, @NonNull List<LevelsItem> objects) {
@@ -48,8 +49,8 @@ public class LevelsAdapter extends ArrayAdapter<LevelsItem> {
 
         holder.position = position;
         holder.title.setText(level.title);
-
         holder.checkbox.setChecked(level.checked);
+        holder.date_level.setText(level.date);
 
         return convertView;
     }
@@ -62,6 +63,7 @@ public class LevelsAdapter extends ArrayAdapter<LevelsItem> {
 
         holder.title = convertView.findViewById(R.id.title_level);
         holder.checkbox = convertView.findViewById(R.id.checkbox);
+        holder.date_level = convertView.findViewById(R.id.date_level);
 
         return convertView;
     }

@@ -2,6 +2,7 @@ package com.example.myrpg.menu;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -49,10 +50,14 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void goContinueMode() {
+        MediaPlayer mp = MediaPlayer.create(getBaseContext(), R.raw.loadsave);
+        mp.start();
         startActivity(new Intent(this, LevelsActivity.class));
     }
 
     public void goNewGameMode() {
+        MediaPlayer mp = MediaPlayer.create(getBaseContext(), R.raw.loadsave);
+        mp.start();
         SharedPreferences.Editor edit = this.getSharedPreferences("PROGRESSION",MODE_PRIVATE).edit();
         edit.clear();
         edit.apply();
