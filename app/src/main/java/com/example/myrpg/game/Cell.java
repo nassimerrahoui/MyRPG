@@ -35,7 +35,7 @@ public class Cell extends View {
         this.personnage = personnage;
     }
 
-    public void onDraw(Canvas canvas, int cell_width, int cell_height) {
+    public void drawCell(Canvas canvas, int cell_width, int cell_height) {
 
         Paint myPaint = new Paint();
 
@@ -72,7 +72,7 @@ public class Cell extends View {
             canvas.drawRect(x,y,x+cell_width,y+cell_height, myPaint);
             myPaint.setStyle(Paint.Style.FILL);
             myPaint.setColor(Color.WHITE);
-            canvas.drawRect(x+2,y+2,x+cell_width-2,y+cell_height-2, myPaint);
+            //canvas.drawRect(x+2,y+2,x+cell_width-2,y+cell_height-2, myPaint);
         }
     }
 

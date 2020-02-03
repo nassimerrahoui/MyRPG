@@ -24,16 +24,22 @@ public class GameEngine extends Thread {
     public void run() {
         boolean end= false;
         while (running) {
-                Canvas c = view.getHolder().lockCanvas();
-                synchronized (view.getHolder()) {
-                    end = view.isWin() || view.isLost();
-                    view.onDraw(c);
-                    if(end){
-                        running = false;
-                    }
+            Canvas c = view.getHolder().lockCanvas();
+            synchronized (view.getHolder()) {
+                end = view.isWin() || view.isLost();
+                view.onDraw(c);
+                if(end){
+                    running = false;
                 }
-                if (c != null) {
-                    view.getHolder().unlockCanvasAndPost(c);
+            }
+            if (c != null) {
+                view.getHolder().unlockCanvasAndPost(c);
+            }
+
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

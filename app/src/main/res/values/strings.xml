@@ -14,7 +14,7 @@
     <string name="HP">" HP"</string>
     <string name="MP">" MP"</string>
     <string name="enemy_down">Ennemi a été tué</string>
-    <string name="enemy_hurt">Ennemi a perdu</string>
+    <string name="enemy_hurt">"Ennemi a perdu "</string>
     <string name="player_down">Principiante esta muerto</string>
     <string name="player_hurt">"Principiante ha perdido "</string>
     <string name="level">"Level "</string>

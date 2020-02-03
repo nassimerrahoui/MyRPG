@@ -5,13 +5,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -23,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import com.example.myrpg.R;
 import com.example.myrpg.level.LevelFragment;
@@ -43,7 +47,7 @@ public class GameView extends SurfaceView {
     protected int width;
     protected int height;
     private SurfaceHolder holder;
-    private Drawable bg;
+    private Bitmap bg;
     private int levelId;
 
     /** attributs des cellules du jeu */
@@ -83,7 +87,10 @@ public class GameView extends SurfaceView {
         //set background
         //bg = ContextCompat.getDrawable(context, R.drawable.map1);
         //setBackground(bg);
-        setBackgroundColor(Color.TRANSPARENT);
+        //setWillNotDraw(false);
+
+        //no background
+        //setBackgroundColor(Color.TRANSPARENT);
 
         // level
         this.levelId = levelId;
@@ -171,6 +178,16 @@ public class GameView extends SurfaceView {
     @SuppressLint("WrongCall")
     @Override
     protected void onDraw(Canvas canvas) {
+        if(levelId == 0) {
+            bg = BitmapFactory.decodeResource(getResources(), R.drawable.map1);
+        } else if(levelId == 1) {
+            bg = BitmapFactory.decodeResource(getResources(), R.drawable.nightmare_bg);
+        } else if(levelId == 2) {
+            bg = BitmapFactory.decodeResource(getResources(), R.drawable.hell_bg);
+        }
+        canvas.drawColor(Color.BLACK);
+        bg = Bitmap.createScaledBitmap(bg, width, height, true);
+        canvas.drawBitmap(bg, 0, 0, null);
         if(!isWin) {
             if(isLost()) {
                 ((Activity) getContext()).runOnUiThread(new Runnable() {
@@ -194,7 +211,8 @@ public class GameView extends SurfaceView {
             } else if(gameEngine.isRunning()) {
                 for (int i = 0; i < NB_CASE_LARGEUR; i++) {
                     for (int j = 0; j < NB_CASE_HAUTEUR; j++) {
-                        cells.get(i).get(j).onDraw(canvas, cell_width, cell_height);
+                        cells.get(i).get(j).drawCell(canvas, cell_width, cell_height);
+                        cells.get(i).get(j).bringToFront();
                     }
                 }
             }
